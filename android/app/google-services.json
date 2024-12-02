@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "723796542944",
+    "project_id": "explore-malaysia-52fe4",
+    "storage_bucket": "explore-malaysia-52fe4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:723796542944:android:8623c3b1ad4a33cbe35785",
+        "android_client_info": {
+          "package_name": "com.example.explore_malaysia"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzvs_PpnyyepyRjkJeriVZF8j7MxeIxGI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

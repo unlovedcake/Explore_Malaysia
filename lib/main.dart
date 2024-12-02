@@ -1,3 +1,8 @@
+import 'dart:ui';
+
+import 'package:explore_malaysia/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
@@ -7,7 +12,18 @@ import 'package:explore_malaysia/routes/router.dart';
 import 'package:explore_malaysia/store/app_state.dart';
 import 'package:explore_malaysia/store/reducers.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  FlutterError.onError = (errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+  };
+  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
   final store = Store<AppState>(
     appReducer,
     initialState: AppState.initial(),
@@ -32,13 +48,13 @@ class MyApp extends StatelessWidget {
           if (didPop) {
             return;
           }
-          
+
           final router = GoRouter.of(context);
           if (router.routerDelegate.currentConfiguration.fullPath != '/') {
             context.pop();
             return;
           }
-          
+
           final shouldPop = await showDialog<bool>(
             context: context,
             builder: (context) {

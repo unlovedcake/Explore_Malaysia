@@ -46,9 +46,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
 
   Future<void> _loadFeaturedProperties() async {
     try {
-      final properties = await PropertyService().getFeaturedProperties();
-
-      print('HELLO');
+      final properties = await _propertyService.getFeaturedProperties();
 
       setState(() {
         _featuredProperties = properties;
