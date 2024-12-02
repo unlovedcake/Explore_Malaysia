@@ -28,10 +28,10 @@ class _HomeScreenState extends State<HomeScreen> {
         _controller.setVolume(0);
         setState(() {});
       });
-    
+
     // Fetch statistics when screen loads
-    StoreProvider.of<AppState>(context, listen: false)
-        .dispatch(fetchStatistics());
+    // StoreProvider.of<AppState>(context, listen: false)
+    //     .dispatch(fetchStatistics());
   }
 
   @override
@@ -154,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           'Discover',
                           style: TextStyle(
                             color: AppColors.primary,
-                          ),                        
+                          ),
                         ),
                       ),
                     ),

@@ -2,10 +2,15 @@ import 'package:explore_malaysia/store/app_state.dart';
 import 'package:explore_malaysia/store/actions.dart';
 
 AppState appReducer(AppState state, dynamic action) {
+  if (action is FetchPropertiesAction) {
+    return state.copyWith(
+      isLoading: false,
+    );
+  }
   if (action is SetLoadingAction) {
     return state.copyWith(isLoading: action.isLoading);
   }
-  
+
   if (action is SetErrorAction) {
     return state.copyWith(error: action.error);
   }

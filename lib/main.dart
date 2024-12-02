@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:explore_malaysia/firebase_options.dart';
+import 'package:explore_malaysia/store/actions.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,7 @@ Future<void> main() async {
   final store = Store<AppState>(
     appReducer,
     initialState: AppState.initial(),
-    middleware: [thunkMiddleware],
+    middleware: [thunkMiddleware, propertyMiddleware],
   );
 
   runApp(MyApp(store: store));

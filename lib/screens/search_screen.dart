@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:explore_malaysia/screens/property_detail_screen.dart';
+
+import 'package:explore_malaysia/store/reducers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:explore_malaysia/store/app_state.dart';
@@ -8,6 +10,7 @@ import 'package:explore_malaysia/models/property.dart';
 import 'package:go_router/go_router.dart';
 import 'package:explore_malaysia/constants/colors.dart';
 import 'package:explore_malaysia/services/property_service.dart';
+import 'package:redux/redux.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -41,6 +44,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _loadFeaturedProperties();
+    StoreProvider.of<AppState>(context, listen: false).dispatch(FetchPropertiesAction());
     StoreProvider.of<AppState>(context, listen: false).dispatch(fetchPropertiesThunk());
   }
 
@@ -534,21 +538,67 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
             ],
           ),
           Expanded(
-            child: _isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(
-                    color: AppColors.primary,
-                  ))
-                : TabBarView(
-                    controller: _tabController,
-                    children: [
-                      _buildPropertyList(_residentialProperties),
-                      _buildPropertyList(_commercialProperties),
-                    ],
-                  ),
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _widgetResidentialProperties(),
+                // _buildPropertyList(_residentialProperties),
+                _buildPropertyList(_commercialProperties),
+              ],
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  StoreConnector<AppState, AppState> _widgetResidentialProperties() {
+    return StoreConnector<AppState, AppState>(
+      converter: (store) => store.state,
+      builder: (context, state) {
+        if (state.isLoading) {
+          return const Center(
+              child: CircularProgressIndicator(
+            color: AppColors.primary,
+          ));
+        }
+
+        if (state.error != null) {
+          return Center(
+            child: Text(
+              state.error ?? 'Something went wrong. Please try again...',
+              style: const TextStyle(
+                color: AppColors.grey600,
+                fontSize: 16,
+              ),
+            ),
+          );
+        }
+        if (state.properties.isEmpty) {
+          return const Center(
+            child: Text(
+              'No properties found',
+              style: TextStyle(
+                color: AppColors.grey600,
+                fontSize: 16,
+              ),
+            ),
+          );
+        }
+        return Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                itemCount: state.properties.length,
+                itemBuilder: (context, index) {
+                  final property = state.properties[index];
+                  return _buildPropertyCard(property);
+                },
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -601,7 +651,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                     width: double.infinity,
                     imageUrl: property.imageUrl,
                     progressIndicatorBuilder: (context, url, downloadProgress) =>
-                        Center(child: const SizedBox(height: 50, width: 50, child: const CircularProgressIndicator())),
+                        const Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator())),
                     errorWidget: (context, url, error) => const Icon(Icons.error),
                   ),
                   // Image.network(
